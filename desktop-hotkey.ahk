@@ -7,6 +7,10 @@ currentDesktop := 1
 maxDesktops := 1
 lastDesktop := 1
 
+; Speed settings (in milliseconds)
+NAVIGATION_DELAY := 20    ; Delay between desktop switches
+CREATION_DELAY := 60      ; Delay after creating new desktop
+
 ; System tray
 A_TrayMenu.Delete()
 A_TrayMenu.Add("Desktop Hotkey Manager", (*) => {})
@@ -44,7 +48,7 @@ SwitchToDesktop(target) {
         while (currentDesktop < maxDesktops) {
             Send("{LWin down}{Ctrl down}{Right}{Ctrl up}{LWin up}")
             currentDesktop++
-            Sleep(50)
+            Sleep(NAVIGATION_DELAY)
         }
         
         ; Create new desktops up to target
@@ -52,7 +56,7 @@ SwitchToDesktop(target) {
             Send("{LWin down}{Ctrl down}d{Ctrl up}{LWin up}")
             maxDesktops++
             currentDesktop := maxDesktops
-            Sleep(100)
+            Sleep(CREATION_DELAY)
         }
         return
     }
@@ -64,7 +68,7 @@ SwitchToDesktop(target) {
     
     Loop steps {
         Send("{LWin down}{Ctrl down}" . direction . "{Ctrl up}{LWin up}")
-        Sleep(50)
+        Sleep(NAVIGATION_DELAY)
     }
     
     currentDesktop := target
@@ -78,19 +82,19 @@ RemoveAllDesktops() {
     while (currentDesktop > 1) {
         Send("{LWin down}{Ctrl down}{Left}{Ctrl up}{LWin up}")
         currentDesktop--
-        Sleep(50)
+        Sleep(NAVIGATION_DELAY)
     }
     
     ; Remove all other desktops (Win+Ctrl+F4 closes current desktop)
     while (maxDesktops > 1) {
         ; Move to desktop 2 (if it exists)
         Send("{LWin down}{Ctrl down}{Right}{Ctrl up}{LWin up}")
-        Sleep(50)
+        Sleep(NAVIGATION_DELAY)
         
         ; Close this desktop (moves us back to desktop 1)
         Send("{LWin down}{Ctrl down}{F4}{Ctrl up}{LWin up}")
         maxDesktops--
-        Sleep(100)
+        Sleep(CREATION_DELAY)
     }
     
     ; Reset tracking
